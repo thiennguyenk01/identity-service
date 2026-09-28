@@ -3,6 +3,8 @@ package hawknet.dev.identity_service.service;
 import hawknet.dev.identity_service.dto.request.UserCreationRequest;
 import hawknet.dev.identity_service.dto.request.UserUpdateRequest;
 import hawknet.dev.identity_service.entity.User;
+import hawknet.dev.identity_service.exception.AppException;
+import hawknet.dev.identity_service.exception.ErrorCode;
 import hawknet.dev.identity_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,10 @@ public class UserService {
 
     public User createUser(UserCreationRequest request){
         User user = new User();
+
+        if(userRepository.existsByUsername(request.getUsername())){
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         user.setFirstName(request.getFirstName());
